@@ -11,8 +11,8 @@ public class ThrowableUtil {
     /**
      * parse error to string
      *
-     * @param e
-     * @return
+     * @param e e
+     * @return string
      */
     public static String toString(Throwable e) {
         StringWriter stringWriter = new StringWriter();

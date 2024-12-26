@@ -49,8 +49,8 @@ public class IpUtil {
     /**
      * valid Inet4Address
      *
-     * @param address
-     * @return
+     * @param address address
+     * @return boolean
      */
     private static boolean isValidV4Address(InetAddress address) {
         if (address == null || address.isLoopbackAddress()) {
@@ -175,7 +175,7 @@ public class IpUtil {
     /**
      * get ip:port
      *
-     * @param port
+     * @param port port
      * @return String
      */
     public static String getIpPort(int port){

@@ -58,12 +58,12 @@ public class XxlJobRemotingUtil {
     /**
      * post
      *
-     * @param url
-     * @param accessToken
-     * @param timeout
-     * @param requestObj
-     * @param returnTargClassOfT
-     * @return
+     * @param url url
+     * @param accessToken token
+     * @param timeout timeout
+     * @param requestObj obj
+     * @param returnTargClassOfT class
+     * @return returnT
      */
     public static ReturnT postBody(String url, String accessToken, int timeout, Object requestObj, Class returnTargClassOfT) {
         HttpURLConnection connection = null;

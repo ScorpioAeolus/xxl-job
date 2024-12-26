@@ -11,7 +11,7 @@ public abstract class IJobHandler {
 	/**
 	 * execute handler, invoked when executor receives a scheduling request
 	 *
-	 * @throws Exception
+	 * @throws Exception exception
 	 */
 	public abstract void execute() throws Exception;
 
@@ -21,6 +21,8 @@ public abstract class IJobHandler {
 
 	/**
 	 * init handler, invoked when JobThread init
+	 *
+	 * @throws Exception exception
 	 */
 	public void init() throws Exception {
 		// do something
@@ -29,6 +31,8 @@ public abstract class IJobHandler {
 
 	/**
 	 * destroy handler, invoked when JobThread destroy
+	 *
+	 * @throws Exception exception
 	 */
 	public void destroy() throws Exception {
 		// do something

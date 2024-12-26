@@ -20,8 +20,8 @@ public class FileUtil {
     /**
      * delete recursively
      *
-     * @param root
-     * @return
+     * @param root root
+     * @return boolean
      */
     public static boolean deleteRecursively(File root) {
         if (root != null && root.exists()) {
