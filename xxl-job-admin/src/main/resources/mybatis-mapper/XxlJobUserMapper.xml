@@ -9,6 +9,7 @@
 	    <result column="password" property="password" />
 	    <result column="role" property="role" />
 	    <result column="permission" property="permission" />
+		<result column="secret_key" property="secretKey"/>
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -16,7 +17,8 @@
 		t.username,
 		t.password,
 		t.role,
-		t.permission
+		t.permission,
+		t.secret_key
 	</sql>
 
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobUser">
@@ -58,12 +60,14 @@
 			username,
 			password,
 			role,
-			permission
+			permission,
+		    secret_key
 		) VALUES (
 			#{username},
 			#{password},
 			#{role},
-			#{permission}
+			#{permission},
+		    #{secretKey}
 		);
 	</insert>
 

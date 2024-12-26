@@ -64,9 +64,9 @@ public class IndexController {
 	@RequestMapping(value="login", method=RequestMethod.POST)
 	@ResponseBody
 	@PermissionLimit(limit=false)
-	public ReturnT<String> loginDo(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
+	public ReturnT<String> loginDo(HttpServletRequest request, HttpServletResponse response, String userName, String password,String googleCode, String ifRemember){
 		boolean ifRem = (ifRemember!=null && ifRemember.trim().length()>0 && "on".equals(ifRemember))?true:false;
-		return loginService.login(request, response, userName, password, ifRem);
+		return loginService.login(request, response, userName, password,googleCode, ifRem);
 	}
 	
 	@RequestMapping(value="logout", method=RequestMethod.POST)

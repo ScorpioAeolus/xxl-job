@@ -13,6 +13,15 @@ public class XxlJobUser {
 	private int role;				// 角色：0-普通用户、1-管理员
 	private String permission;	// 权限：执行器ID列表，多个逗号分割
 
+	private String secretKey;
+	public String getSecretKey() {
+		return secretKey;
+	}
+
+	public void setSecretKey(String secretKey) {
+		this.secretKey = secretKey;
+	}
+
 	public int getId() {
 		return id;
 	}

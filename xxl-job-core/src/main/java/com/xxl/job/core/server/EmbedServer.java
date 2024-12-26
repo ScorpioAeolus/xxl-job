@@ -19,7 +19,15 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.*;
 
 /**
@@ -33,8 +41,8 @@ public class EmbedServer {
     private ExecutorBiz executorBiz;
     private Thread thread;
 
-    public void start(final String address, final int port, final String appname, final String accessToken) {
-        executorBiz = new ExecutorBizImpl();
+    public void start(boolean allowScript,final String adminIp,final String address, final int port, final String appname, final String accessToken) {
+        executorBiz = new ExecutorBizImpl(allowScript);
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -71,7 +79,7 @@ public class EmbedServer {
                                             .addLast(new IdleStateHandler(0, 0, 30 * 3, TimeUnit.SECONDS))  // beat 3N, close if idle
                                             .addLast(new HttpServerCodec())
                                             .addLast(new HttpObjectAggregator(5 * 1024 * 1024))  // merge request & reponse to FULL
-                                            .addLast(new EmbedHttpServerHandler(executorBiz, accessToken, bizThreadPool));
+                                            .addLast(new EmbedHttpServerHandler(adminIp,executorBiz, accessToken, bizThreadPool));
                                 }
                             })
                             .childOption(ChannelOption.SO_KEEPALIVE, true);
@@ -130,14 +138,30 @@ public class EmbedServer {
     public static class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         private static final Logger logger = LoggerFactory.getLogger(EmbedHttpServerHandler.class);
 
+        private Set<String> adminIpSet;
+
         private ExecutorBiz executorBiz;
         private String accessToken;
         private ThreadPoolExecutor bizThreadPool;
 
-        public EmbedHttpServerHandler(ExecutorBiz executorBiz, String accessToken, ThreadPoolExecutor bizThreadPool) {
+        public EmbedHttpServerHandler(String adminIp,ExecutorBiz executorBiz, String accessToken, ThreadPoolExecutor bizThreadPool) {
             this.executorBiz = executorBiz;
             this.accessToken = accessToken;
             this.bizThreadPool = bizThreadPool;
+            this.adminIpSet = this.buildAdminIpSet(adminIp);
+        }
+
+        private Set<String> buildAdminIpSet(String adminIp) {
+            if(!StringUtils.hasText(adminIp)) {
+                return Collections.emptySet();
+            }
+            return new HashSet<>(Arrays.asList(adminIp.split(",")));
+        }
+
+        private static boolean isValidIPAddress(String ipAddress) {
+            // Simple validation for IPv4 address format
+            // This regex matches IP addresses like 127.0.0.1
+            return ipAddress.matches("\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b");
         }
 
         @Override
@@ -149,13 +173,15 @@ public class EmbedServer {
             HttpMethod httpMethod = msg.method();
             boolean keepAlive = HttpUtil.isKeepAlive(msg);
             String accessTokenReq = msg.headers().get(XxlJobRemotingUtil.XXL_JOB_ACCESS_TOKEN);
+            InetSocketAddress inetSocketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+            String adminIp = inetSocketAddress.getAddress().getHostAddress();
 
             // invoke
             bizThreadPool.execute(new Runnable() {
                 @Override
                 public void run() {
                     // do invoke
-                    Object responseObj = process(httpMethod, uri, requestData, accessTokenReq);
+                    Object responseObj = process(httpMethod, uri, requestData, accessTokenReq,adminIp);
 
                     // to json
                     String responseJson = GsonTool.toJson(responseObj);
@@ -166,7 +192,7 @@ public class EmbedServer {
             });
         }
 
-        private Object process(HttpMethod httpMethod, String uri, String requestData, String accessTokenReq) {
+        private Object process(HttpMethod httpMethod, String uri, String requestData, String accessTokenReq,String adminIp) {
             // valid
             if (HttpMethod.POST != httpMethod) {
                 return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, HttpMethod not support.");
@@ -178,6 +204,11 @@ public class EmbedServer {
                     && accessToken.trim().length() > 0
                     && !accessToken.equals(accessTokenReq)) {
                 return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
+            }
+
+            if(!adminIpSet.contains(adminIp)) {
+                logger.warn("process admin ip illegal;adminIp={}",adminIp);
+                return new ReturnT<String>(ReturnT.FAIL_CODE, "The admin ip  is illegal.");
             }
 
             // services mapping

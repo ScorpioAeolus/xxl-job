@@ -22,7 +22,12 @@ $(function(){
             	required : true ,
                 minlength: 4,
                 maxlength: 18
-            } 
+            } ,
+            googleCode : {
+                required : true ,
+                minlength: 6,
+                maxlength: 6
+            }
         }, 
         messages : {  
         	userName : {  
@@ -32,6 +37,12 @@ $(function(){
             password : {
             	required  : I18n.login_password_empty  ,
                 minlength : I18n.login_password_lt_4
+                /*,maxlength:"登录密码不应超过18位"*/
+            }
+            ,
+            googleCode : {
+                required  : I18n.login_googleCode_empty  ,
+                minlength : I18n.login_google_code_lt_6
                 /*,maxlength:"登录密码不应超过18位"*/
             }
         }, 

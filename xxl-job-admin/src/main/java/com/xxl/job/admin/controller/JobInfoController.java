@@ -18,6 +18,7 @@ import com.xxl.job.core.glue.GlueTypeEnum;
 import com.xxl.job.core.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,13 +42,16 @@ public class JobInfoController {
 	private XxlJobGroupDao xxlJobGroupDao;
 	@Resource
 	private XxlJobService xxlJobService;
+
+	@Value("${job.allow.script:false}")
+	private boolean allowScript;
 	
 	@RequestMapping
 	public String index(HttpServletRequest request, Model model, @RequestParam(required = false, defaultValue = "-1") int jobGroup) {
 
 		// 枚举-字典
 		model.addAttribute("ExecutorRouteStrategyEnum", ExecutorRouteStrategyEnum.values());	    // 路由策略-列表
-		model.addAttribute("GlueTypeEnum", GlueTypeEnum.values());								// Glue类型-字典
+		model.addAttribute("GlueTypeEnum", this.filterTypes(this.allowScript));								// Glue类型-字典
 		model.addAttribute("ExecutorBlockStrategyEnum", ExecutorBlockStrategyEnum.values());	    // 阻塞处理策略-字典
 		model.addAttribute("ScheduleTypeEnum", ScheduleTypeEnum.values());	    				// 调度类型
 		model.addAttribute("MisfireStrategyEnum", MisfireStrategyEnum.values());	    			// 调度过期策略
@@ -65,6 +69,13 @@ public class JobInfoController {
 		model.addAttribute("jobGroup", jobGroup);
 
 		return "jobinfo/jobinfo.index";
+	}
+
+	private GlueTypeEnum[] filterTypes(boolean allowScript) {
+		if(allowScript) {
+			return GlueTypeEnum.values();
+		}
+		return new GlueTypeEnum[]{GlueTypeEnum.BEAN};
 	}
 
 	@RequestMapping("/pageList")

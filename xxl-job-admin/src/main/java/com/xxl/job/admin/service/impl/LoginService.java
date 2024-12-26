@@ -5,7 +5,10 @@ import com.xxl.job.admin.core.util.CookieUtil;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.core.util.JacksonUtil;
 import com.xxl.job.admin.dao.XxlJobUserDao;
+import com.xxl.job.admin.util.SecretKeyUtil;
 import com.xxl.job.core.biz.model.ReturnT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -19,6 +22,8 @@ import java.math.BigInteger;
  */
 @Service
 public class LoginService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
 
     public static final String LOGIN_IDENTITY_KEY = "XXL_JOB_LOGIN_IDENTITY";
 
@@ -45,21 +50,31 @@ public class LoginService {
 
     // ---------------------- login tool, with cookie and db ----------------------
 
-    public ReturnT<String> login(HttpServletRequest request, HttpServletResponse response, String username, String password, boolean ifRemember){
+    public ReturnT<String> login(HttpServletRequest request, HttpServletResponse response, String username, String password,String googleCode, boolean ifRemember){
 
         // param
-        if (username==null || username.trim().length()==0 || password==null || password.trim().length()==0){
+        if (username==null
+                || username.trim().isEmpty()
+                || password==null
+                || password.trim().isEmpty()
+                || null == googleCode
+                || googleCode.trim().isEmpty()){
             return new ReturnT<String>(500, I18nUtil.getString("login_param_empty"));
         }
 
         // valid passowrd
         XxlJobUser xxlJobUser = xxlJobUserDao.loadByUserName(username);
         if (xxlJobUser == null) {
-            return new ReturnT<String>(500, I18nUtil.getString("login_param_unvalid"));
+            return new ReturnT<String>(500, I18nUtil.getString("login_param_invalid"));
         }
         String passwordMd5 = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!passwordMd5.equals(xxlJobUser.getPassword())) {
-            return new ReturnT<String>(500, I18nUtil.getString("login_param_unvalid"));
+            return new ReturnT<String>(500, I18nUtil.getString("login_param_invalid"));
+        }
+
+        if(!SecretKeyUtil.validateGoogleCodeLogin(googleCode,xxlJobUser.getSecretKey())) {
+            logger.warn("LoginService.login google code illegal;googleCode={},username={},secretKey={}",googleCode,xxlJobUser.getUsername(),xxlJobUser.getSecretKey());
+            return new ReturnT<String>(500, I18nUtil.getString("google_code_invalid"));
         }
 
         String loginToken = makeToken(xxlJobUser);

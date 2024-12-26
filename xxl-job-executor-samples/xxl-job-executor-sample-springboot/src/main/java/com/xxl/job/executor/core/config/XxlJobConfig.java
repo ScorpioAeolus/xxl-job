@@ -40,6 +40,12 @@ public class XxlJobConfig {
     @Value("${xxl.job.executor.logretentiondays}")
     private int logRetentionDays;
 
+    @Value("${job.allow.script:false}")
+    private boolean allowScript;
+
+    @Value("${xxl.job.admin.ip}")
+    private String adminIp;
+
 
     @Bean
     public XxlJobSpringExecutor xxlJobExecutor() {
@@ -53,6 +59,8 @@ public class XxlJobConfig {
         xxlJobSpringExecutor.setAccessToken(accessToken);
         xxlJobSpringExecutor.setLogPath(logPath);
         xxlJobSpringExecutor.setLogRetentionDays(logRetentionDays);
+        xxlJobSpringExecutor.setAllowScript(this.allowScript);
+        xxlJobSpringExecutor.setAdminIp(this.adminIp);
 
         return xxlJobSpringExecutor;
     }

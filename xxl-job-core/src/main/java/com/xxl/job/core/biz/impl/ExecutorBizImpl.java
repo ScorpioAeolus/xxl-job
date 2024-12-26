@@ -22,6 +22,13 @@ import java.util.Date;
 public class ExecutorBizImpl implements ExecutorBiz {
     private static Logger logger = LoggerFactory.getLogger(ExecutorBizImpl.class);
 
+    private boolean allowScript;
+
+    public ExecutorBizImpl(boolean allowScript) {
+        super();
+        this.allowScript = allowScript;
+    }
+
     @Override
     public ReturnT<String> beat() {
         return ReturnT.SUCCESS;
@@ -74,7 +81,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
                 }
             }
 
-        } else if (GlueTypeEnum.GLUE_GROOVY == glueTypeEnum) {
+        } else if (GlueTypeEnum.GLUE_GROOVY == glueTypeEnum && allowScript) {
 
             // valid old jobThread
             if (jobThread != null &&
@@ -97,7 +104,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
                     return new ReturnT<String>(ReturnT.FAIL_CODE, e.getMessage());
                 }
             }
-        } else if (glueTypeEnum!=null && glueTypeEnum.isScript()) {
+        } else if (glueTypeEnum!=null && glueTypeEnum.isScript() && allowScript) {
 
             // valid old jobThread
             if (jobThread != null &&
