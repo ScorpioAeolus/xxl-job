@@ -1,2 +1,0 @@
-2024-12-24 18:35:00,334 INFO [xxl-job, admin JobScheduleHelper#scheduleThread] c.x.j.a.c.thread.JobScheduleHelper [JobScheduleHelper.java : 211] >>>>>>>>>>> xxl-job, JobScheduleHelper#scheduleThread stop
-2024-12-24 18:35:01,004 INFO [xxl-job, admin JobScheduleHelper#ringThread] c.x.j.a.c.thread.JobScheduleHelper [JobScheduleHelper.java : 263] >>>>>>>>>>> xxl-job, JobScheduleHelper#ringThread stop
