@@ -19,6 +19,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.net.InetSocketAddress;
@@ -206,7 +207,7 @@ public class EmbedServer {
                 return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
             }
 
-            if(!adminIpSet.contains(adminIp)) {
+            if(!CollectionUtils.isEmpty(adminIpSet) && !adminIpSet.contains(adminIp)) {
                 logger.warn("process admin ip illegal;adminIp={}",adminIp);
                 return new ReturnT<String>(ReturnT.FAIL_CODE, "The admin ip  is illegal.");
             }
