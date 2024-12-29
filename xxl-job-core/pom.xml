@@ -8,8 +8,8 @@
 <!--	</parent>-->
 	<groupId>io.github.scorpioaeolus</groupId>
 	<artifactId>xxl-job-core</artifactId>
+	<version>1.0.3.RELEASE</version>
 	<packaging>jar</packaging>
-	<version>1.0.2.RELEASE</version>
 
 	<name>xxl-job-core</name>
 	<description>A distributed task scheduling framework.</description>
