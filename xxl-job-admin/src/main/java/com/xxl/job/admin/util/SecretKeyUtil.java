@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.UUID;
 
 public class SecretKeyUtil {
 
@@ -51,18 +52,18 @@ public class SecretKeyUtil {
 
     public static void main(String[] args) throws InvalidKeyException {
 
-//        System.out.println(generatorSecretKey());
-//        String secretKey = "A356HCI4BKDHON7JP7YSXFMYC3ZUR2DC";
-//        TimeBasedOneTimePasswordGenerator generator = new TimeBasedOneTimePasswordGenerator();
-//        byte[] decodedKey = new Base32().decode(secretKey);
-//        String currentCode = generator.generateOneTimePasswordString(
-//                new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA1"),
-//                Instant.now());
-//        System.out.println(currentCode);
-        try {
-            System.out.println(new String("穀歌驗證碼必須6數位".getBytes("UTF-8"),"ISO8859-1"));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        System.out.println(generatorSecretKey());
+        String secretKey = "A356HCI4BKDHON7JP7YSXFMYC3ZUR2DC";
+        TimeBasedOneTimePasswordGenerator generator = new TimeBasedOneTimePasswordGenerator();
+        byte[] decodedKey = new Base32().decode(secretKey);
+        String currentCode = generator.generateOneTimePasswordString(
+                new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA1"),
+                Instant.now());
+        System.out.println(currentCode);
+//        try {
+//            System.out.println(new String("穀歌驗證碼必須6數位".getBytes("UTF-8"),"ISO8859-1"));
+//        } catch (UnsupportedEncodingException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }
