@@ -74,6 +74,23 @@
 			<artifactId>xxl-job-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>io.github.scorpioaeolus</groupId>-->
+<!--			<artifactId>xxl-job-core</artifactId>-->
+<!--			<version>1.0.3.RELEASE</version>-->
+<!--		</dependency>-->
+
+		<dependency>
+			<groupId>com.eatthepath</groupId>
+			<artifactId>java-otp</artifactId>
+			<version>0.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.16.0</version>
+		</dependency>
 
 		<!-- xxl-sso (xxl-tool、gson) -->
 		<dependency>
@@ -98,8 +115,16 @@
 					</execution>
 				</executions>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
+                </configuration>
+            </plugin>
 
-			<!-- docker -->
+            <!-- docker -->
 			<!--<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>

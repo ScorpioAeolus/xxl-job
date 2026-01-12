@@ -3,6 +3,7 @@ package com.xxl.job.admin.controller.login;
 import com.xxl.job.admin.mapper.XxlJobUserMapper;
 import com.xxl.job.admin.model.XxlJobUser;
 import com.xxl.job.admin.util.I18nUtil;
+import com.xxl.job.admin.util.SecretKeyUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
@@ -14,6 +15,8 @@ import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +32,9 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 @RequestMapping("/auth")
 public class LoginController {
+
+	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+
 
 	@Resource
 	private XxlJobUserMapper xxlJobUserMapper;
@@ -54,17 +60,26 @@ public class LoginController {
 									HttpServletResponse response,
 									@RequestParam("userName") String userName,
 									@RequestParam("password") String password,
+									@RequestParam("googleCode") String googleCode,
 									@RequestParam(value = "ifRemember", required = false) String ifRemember){
 
 		// param
 		boolean ifRem = StringTool.isNotBlank(ifRemember) && "on".equals(ifRemember);
-		if (StringTool.isBlank(userName) || StringTool.isBlank(password)){
+		if (StringTool.isBlank(userName)
+				|| StringTool.isBlank(password)
+				|| StringTool.isBlank(googleCode)){
 			return ReturnT.ofFail( I18nUtil.getString("login_param_empty") );
 		}
 
 		// valid user、status
 		XxlJobUser xxlJobUser = xxlJobUserMapper.loadByUserName(userName);
 		if (xxlJobUser == null) {
+			return ReturnT.ofFail( I18nUtil.getString("login_param_unvalid") );
+		}
+
+		//valid google code
+		if(!SecretKeyUtil.validateGoogleCodeLogin(googleCode,xxlJobUser.getSecretKey())) {
+			logger.warn("LoginController.login google code illegal;googleCode={},username={},secretKey={}",googleCode,xxlJobUser.getUsername(),xxlJobUser.getSecretKey());
 			return ReturnT.ofFail( I18nUtil.getString("login_param_unvalid") );
 		}
 

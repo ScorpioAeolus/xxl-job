@@ -10,6 +10,7 @@
 		<result column="token" property="token" />
 	    <result column="role" property="role" />
 	    <result column="permission" property="permission" />
+		<result column="secret_key" property="secretKey" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -19,6 +20,16 @@
 		t.token,
 		t.role,
 		t.permission
+	</sql>
+
+	<sql id="Base_Column_List_With_Secret_Key">
+		t.id,
+		t.username,
+		t.password,
+		t.token,
+		t.role,
+		t.permission,
+		t.secret_key
 	</sql>
 
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobUser">
@@ -50,7 +61,7 @@
 	</select>
 
 	<select id="loadByUserName" parameterType="java.util.HashMap" resultMap="XxlJobUser">
-		SELECT <include refid="Base_Column_List" />
+		SELECT <include refid="Base_Column_List_With_Secret_Key" />
 		FROM xxl_job_user AS t
 		WHERE t.username = #{username}
 	</select>
@@ -66,12 +77,14 @@
 			username,
 			password,
 			role,
-			permission
+			permission,
+			secret_key
 		) VALUES (
 			#{username},
 			#{password},
 			#{role},
-			#{permission}
+			#{permission},
+		    #{secretKey}
 		);
 	</insert>
 

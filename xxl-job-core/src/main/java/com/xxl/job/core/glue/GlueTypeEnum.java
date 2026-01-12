@@ -51,4 +51,16 @@ public enum GlueTypeEnum {
         return null;
     }
 
+    public static boolean match(String name,boolean allowScript){
+        if(!allowScript) {
+            return GlueTypeEnum.BEAN.name().equals(name);
+        }
+        for (GlueTypeEnum item: GlueTypeEnum.values()) {
+            if (item.name().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

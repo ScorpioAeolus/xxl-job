@@ -6,6 +6,7 @@ import com.xxl.job.admin.mapper.XxlJobUserMapper;
 import com.xxl.job.admin.model.XxlJobGroup;
 import com.xxl.job.admin.model.XxlJobUser;
 import com.xxl.job.admin.util.I18nUtil;
+import com.xxl.job.admin.util.SecretKeyUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
@@ -107,6 +108,8 @@ public class JobUserController {
         }
 
         // write
+        String secretKey = SecretKeyUtil.generatorSecretKey();
+        xxlJobUser.setSecretKey(secretKey);
         xxlJobUserMapper.save(xxlJobUser);
         return ReturnT.ofSuccess();
     }
