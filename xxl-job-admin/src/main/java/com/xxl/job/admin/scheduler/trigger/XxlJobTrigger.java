@@ -58,7 +58,7 @@ public class XxlJobTrigger {
             jobInfo.setExecutorParam(executorParam);
         }
         int finalFailRetryCount = failRetryCount>=0?failRetryCount:jobInfo.getExecutorFailRetryCount();
-        XxlJobGroup group = XxlJobAdminConfig.getAdminConfig().getXxlJobGroupMapper().load(jobInfo.getJobGroup());
+        XxlJobGroup group = XxlJobAdminConfig.getAdminConfig().getXxlJobGroupMapper().loadByIdWithToken(jobInfo.getJobGroup());
 
         // cover addressList
         if (addressList!=null && addressList.trim().length()>0) {
@@ -161,7 +161,7 @@ public class XxlJobTrigger {
         // 4、trigger remote executor
         ReturnT<String> triggerResult = null;
         if (address != null) {
-            triggerResult = runExecutor(triggerParam, address);
+            triggerResult = runExecutor(triggerParam, address,group.getAccessToken());
         } else {
             triggerResult = ReturnT.ofFail(null);
         }
@@ -211,6 +211,26 @@ public class XxlJobTrigger {
             runResult = executorBiz.run(triggerParam);
         } catch (Exception e) {
             logger.error(">>>>>>>>>>> xxl-job trigger error, please check if the executor[{}] is running.", address, e);
+            runResult = ReturnT.ofFail(ThrowableUtil.toString(e));
+        }
+
+        StringBuffer runResultSB = new StringBuffer(I18nUtil.getString("jobconf_trigger_run") + "：");
+        runResultSB.append("<br>address：").append(address);
+        runResultSB.append("<br>code：").append(runResult.getCode());
+        runResultSB.append("<br>msg：").append(runResult.getMsg());
+
+        runResult.setMsg(runResultSB.toString());
+        return runResult;
+    }
+
+
+    public static ReturnT<String> runExecutor(TriggerParam triggerParam, String address,String accessToken){
+        ReturnT<String> runResult = null;
+        try {
+            ExecutorBiz executorBiz = XxlJobScheduler.getExecutorBiz(address,accessToken);
+            runResult = executorBiz.run(triggerParam);
+        } catch (Exception e) {
+            logger.error(">>>>>>>>>>> xxl-job trigger occur error, please check if the executor[{}] is running.", address, e);
             runResult = ReturnT.ofFail(ThrowableUtil.toString(e));
         }
 

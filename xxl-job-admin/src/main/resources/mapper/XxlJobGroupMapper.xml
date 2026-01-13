@@ -10,6 +10,7 @@
 		<result column="address_type" property="addressType" />
 		<result column="address_list" property="addressList" />
 		<result column="update_time" property="updateTime" />
+		<result column="access_token" property="accessToken" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -20,6 +21,17 @@
 		t.address_list,
 		t.update_time
 	</sql>
+
+	<sql id="Base_Column_List_With_Token">
+		t.id,
+		t.app_name,
+		t.title,
+		t.address_type,
+		t.address_list,
+		t.update_time,
+		t.access_token
+	</sql>
+
 
 	<select id="findAll" resultMap="XxlJobGroup">
 		SELECT <include refid="Base_Column_List" />
@@ -35,8 +47,8 @@
 	</select>
 
 	<insert id="save" parameterType="com.xxl.job.admin.model.XxlJobGroup" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO xxl_job_group ( `app_name`, `title`, `address_type`, `address_list`, `update_time`)
-		values ( #{appname}, #{title}, #{addressType}, #{addressList}, #{updateTime} );
+		INSERT INTO xxl_job_group ( `app_name`, `title`, `address_type`, `address_list`, `update_time`,`access_token`)
+		values ( #{appname}, #{title}, #{addressType}, #{addressList}, #{updateTime},#{accessToken} );
 	</insert>
 
 	<update id="update" parameterType="com.xxl.job.admin.model.XxlJobGroup" >
@@ -56,6 +68,12 @@
 
 	<select id="load" parameterType="java.lang.Integer" resultMap="XxlJobGroup">
 		SELECT <include refid="Base_Column_List" />
+		FROM xxl_job_group AS t
+		WHERE t.id = #{id}
+	</select>
+
+	<select id="loadByIdWithToken" parameterType="java.lang.Integer" resultMap="XxlJobGroup">
+		SELECT <include refid="Base_Column_List_With_Token" />
 		FROM xxl_job_group AS t
 		WHERE t.id = #{id}
 	</select>

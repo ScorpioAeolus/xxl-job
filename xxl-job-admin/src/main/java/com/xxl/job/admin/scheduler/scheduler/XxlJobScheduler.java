@@ -6,6 +6,7 @@ import com.xxl.job.admin.util.I18nUtil;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.client.ExecutorBizClient;
 import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
+import com.xxl.tool.core.StringTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +95,30 @@ public class XxlJobScheduler  {
         // set-cache
         executorBiz = new ExecutorBizClient(address,
                 XxlJobAdminConfig.getAdminConfig().getAccessToken(),
+                XxlJobAdminConfig.getAdminConfig().getTimeout());
+
+        executorBizRepository.put(address, executorBiz);
+        return executorBiz;
+    }
+
+
+    public static ExecutorBiz getExecutorBiz(String address,String accessToken) throws Exception {
+        // valid
+        if (address==null || address.trim().length()==0) {
+            return null;
+        }
+
+        // load-cache
+        address = address.trim();
+        ExecutorBiz executorBiz = executorBizRepository.get(address);
+        if (executorBiz != null) {
+            return executorBiz;
+        }
+
+        accessToken = StringTool.isBlank(accessToken) ? XxlJobAdminConfig.getAdminConfig().getAccessToken() : accessToken;
+        // set-cache
+        executorBiz = new ExecutorBizClient(address,
+                accessToken,
                 XxlJobAdminConfig.getAdminConfig().getTimeout());
 
         executorBizRepository.put(address, executorBiz);

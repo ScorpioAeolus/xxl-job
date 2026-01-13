@@ -215,6 +215,11 @@ $(function() {
 			title : {
 				required : true,
 				rangelength:[4, 12]
+			},
+			accessToken : {
+				required : true ,
+				minlength: 10,
+				maxlength: 10
 			}
 		},
 		messages : {
@@ -226,6 +231,11 @@ $(function() {
 			title : {
 				required : I18n.system_please_input + I18n.jobgroup_field_title ,
 				rangelength: I18n.jobgroup_field_title_length
+			},
+			accessToken : {
+				required  : I18n.jobgroup_field_accessToken_empty  ,
+				minlength : I18n.jobgroup_field_accessToken_lt_10
+				/*,maxlength:"登录密码不应超过18位"*/
 			}
 		},
 		highlight : function(element) {
